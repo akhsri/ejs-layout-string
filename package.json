@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "packageManager": "pnpm@9.14.3",
   "description": "EJS layout renderer that returns HTML strings with custom layout path support",
-  "author":  {
+  "author": {
     "name": "Aakash Srivastav",
     "email": "akhsri21@gmail.com",
     "url": "https://github.com/akhsri"
@@ -60,10 +60,14 @@
     "typecheck": "tsc --noEmit",
     "prepare": "simple-git-hooks"
   },
+  "dependencies": {
+    "ejs": "3.1.9"
+  },
   "devDependencies": {
     "@antfu/eslint-config": "^3.11.2",
     "@antfu/ni": "^0.23.1",
     "@antfu/utils": "^0.7.10",
+    "@types/ejs": "^3.1.5",
     "@types/node": "^22.10.1",
     "bumpp": "^9.8.1",
     "eslint": "^9.15.0",
