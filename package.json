@@ -3,17 +3,30 @@
   "type": "module",
   "version": "0.0.0",
   "packageManager": "pnpm@9.14.3",
-  "description": "_description_",
-  "author": "Anthony Fu <anthonyfu117@hotmail.com>",
+  "description": "EJS layout renderer that returns HTML strings with custom layout path support",
+  "author":  {
+    "name": "Aakash Srivastav",
+    "email": "akhsri21@gmail.com",
+    "url": "https://github.com/akhsri"
+  },
   "license": "MIT",
-  "funding": "https://github.com/sponsors/antfu",
-  "homepage": "https://github.com/antfu/pkg-placeholder#readme",
+  "funding": "https://github.com/sponsors/akhsri",
+  "homepage": "https://github.com/redbus-labs/ejs-layout-string#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/antfu/pkg-placeholder.git"
+    "url": "git+https://github.com/redbus-labs/ejs-layout-string.git"
   },
-  "bugs": "https://github.com/antfu/pkg-placeholder/issues",
-  "keywords": [],
+  "bugs": "https://github.com/redbus-labs/ejs-layout-string/issues",
+  "keywords": [
+    "ejs",
+    "layout",
+    "template",
+    "render",
+    "rendering",
+    "html",
+    "express",
+    "ejs string"
+  ],
   "sideEffects": false,
   "exports": {
     ".": {
