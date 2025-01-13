@@ -2,6 +2,15 @@ import ejs from 'ejs';
 
 const contentPattern = '&&<>&&';
 
+interface RenderOptions {
+  layoutsPath: string;
+  extractScripts?: boolean;
+  extractStyles?: boolean;
+  extractStylesToBody?: boolean;
+  extractMetas?: boolean;
+  [key: string]: any;
+}
+
 function contentFor(contentName: any) {
   return contentPattern + contentName + contentPattern;
 }
@@ -24,14 +33,28 @@ function parseContents(locals: any) {
   }
 }
 
-function parseElements(locals: any, regex: any, prop: string, shouldExtract: boolean) {
+function parseElements(locals: any, regex: any, prop: string, shouldExtract: boolean, extractToBody = false) {
   const str = locals.body;
 
-  if (shouldExtract && regex.test(str)) {
+  // Style extraction precedence
+  // Case 1: extractStyles true, extractStylesToBody false -> extract style to head
+  // Case 2: extractStyles false, extractStylesToBody true -> extract style to body end
+  // Case 3: both true -> extract style to body end (body takes precedence)
+  // Case 4: both false -> don't extract
+
+  if (shouldExtract && !extractToBody && regex.test(str)) {
     locals.body = str.replace(regex, '');
     locals[prop] = str.match(regex)?.join('\n') || '';
+  } else if (!shouldExtract && extractToBody && regex.test(str)) {
+    const extractedContent = str.match(regex)?.join('\n') || '';
+    locals.body = str.replace(regex, '') + `\n${extractedContent}`;
+    locals[prop] = '';
+  } else if (shouldExtract && extractToBody && regex.test(str)) {
+    const extractedContent = str.match(regex)?.join('\n') || '';
+    locals.body = str.replace(regex, '') + `\n${extractedContent}`;
+    locals[prop] = '';
   } else {
-    locals[prop] = ''; // Ensure no leftover extracted content
+    locals[prop] = '';
   }
 }
 
@@ -61,16 +84,7 @@ function renderFileAsync(view: string, options: any) {
   });
 }
 
-export async function renderWithLayout(view: string, options: any) {
-  const appSettings = {
-    layout: 'layout',
-    extractScripts: true,
-    extractStyles: true,
-    extractMetas: true,
-  };
-
-  options = options || {};
-  const layout = options.layout || appSettings.layout;
+export async function renderWithLayout(view: string, options: RenderOptions) {
 
   const mergedOptions = Object.assign({}, options, options._locals);
 
@@ -97,9 +111,9 @@ export async function renderWithLayout(view: string, options: any) {
     locals.meta = '';
 
     // Parse and extract elements based on options
-    parseScripts(locals, options.extractScripts);
-    parseStyles(locals, options.extractStyles);
-    parseMetas(locals, options.extractMetas);
+    parseScripts(locals, options.extractScripts || false);
+    parseStyles(locals, options.extractStyles || false);
+    parseMetas(locals, options.extractMetas || false);
 
     parseContents(locals); // Parse content blocks like <%- contentFor('foo') %>
 
