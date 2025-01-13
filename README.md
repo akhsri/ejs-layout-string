@@ -65,46 +65,35 @@ import { renderWithLayout } from 'ejs-layout-string';
 const ejsPath = path.resolve(__dirname, '../views/pages/ind/page.ejs');
 
 const html = await renderWithLayout(ejsPath, {
+  // Layout options
   layoutsPath: path.resolve(__dirname, '../views/layouts/layout.ejs'),
+  extractScripts: false,      // extract <script> tags to end of body
+  extractStyles: false,       // extract <style> tags to head
+  extractStylesToBody: false,  // extract <style> tags to end of body
+  extractMetas: false   // extract <meta> tags to head
   
-  // Page metadata
+  
+  // Additional properties required for ejs
   title: 'User Dashboard',
   pageDescription: 'View your account details and statistics',
   keywords: 'dashboard, user profile, statistics',
-
-  // User data
   user: {
     name: 'John Doe',
     accountType: 'Premium',
     isAdmin: true
   },
-
-  // Statistics
   stats: {
     orders: 147,
     totalSpend: 2459.99
   },
-
-  // Dates and timestamps
   memberSince: new Date('2023-01-15').toLocaleDateString(),
   lastLogin: new Date('2024-03-20T15:30:00').toLocaleString(),
-
-  // Notifications
   notifications: [
     { message: 'Your order #123 has been shipped' },
     { message: 'New feature available: Dark Mode' },
     { message: '20% off on your next purchase!' }
   ],
-
-  // Contact information
-  supportEmail: 'support@example.com',
-
-  // Layout options
-  layout: 'layouts/layout',  // optional - defaults to 'layout'
-  extractScripts: false,      // extract <script> tags to end of body
-  extractStyles: false,       // extract <style> tags to head
-  extractStylesToBody: false,  // extract <style> tags to end of body
-  extractMetas: false         // extract <meta> tags to head
+  supportEmail: 'support@example.com',        
 });
 
 console.log("Rendered HTML:", html);
