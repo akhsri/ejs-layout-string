@@ -1,5 +1,5 @@
 {
-  "name": "pkg-placeholder",
+  "name": "ejs-layout-string",
   "type": "module",
   "version": "0.0.0",
   "packageManager": "pnpm@9.14.3",
@@ -25,7 +25,9 @@
     "rendering",
     "html",
     "express",
-    "ejs string"
+    "ejs string",
+    "ejs layout",
+    "html caching"
   ],
   "sideEffects": false,
   "exports": {
