@@ -1,37 +1,169 @@
-# pkg-placeholder
+# ejs-layout-string
 
-[![npm version][npm-version-src]][npm-version-href]
-[![npm downloads][npm-downloads-src]][npm-downloads-href]
-[![bundle][bundle-src]][bundle-href]
-[![JSDocs][jsdocs-src]][jsdocs-href]
-[![License][license-src]][license-href]
+`ejs-layout-string` is a utility module for rendering EJS templates with layouts, allowing for dynamic extraction of `<script>`, `<style>`, and `<meta>` tags. It simplifies content organization and improves code reusability. The module also facilitates performance optimization by providing the ability to use the rendered HTML for caching.
 
-_description_
+---
 
-> **Note**:
-> Replace `pkg-placeholder`, `_description_` and `antfu` globally to use this template.
+## Features
 
-## Sponsors
+- 🎯 Layout-based template rendering
+- 🛠️ Configurable extraction options for scripts, styles, and meta tags
+- ⚡ Promise-based async rendering
+- 🔍 TypeScript support
 
-<p align="center">
-  <a href="https://cdn.jsdelivr.net/gh/antfu/static/sponsors.svg">
-    <img src='https://cdn.jsdelivr.net/gh/antfu/static/sponsors.svg'/>
-  </a>
-</p>
+---
+
+## Installation
+
+Install the package:
+
+```bash
+npm install ejs-layout-string
+```
+
+---
+
+## API Reference
+
+### `renderWithLayout(view, options)`
+
+Renders an EJS view with a specified layout and options.
+
+#### Parameters
+
+1. **`view`** (string): Path to the EJS view file to render.
+2. **`options`** ([RenderOptions](#renderoptions)): Options for rendering.
+
+### `RenderOptions`
+
+```typescript
+interface RenderOptions {
+  layoutsPath: string; // Path to the layout EJS file
+  layout?: string;     // Name of the layout file
+  extractScripts?: boolean; // Extract <script> tags to end of body (default: false)
+  extractStyles?: boolean;  // Extract <style> tags to head (default: false)
+  extractStylesToBody?: boolean; // Extract <style> tags to end of body (default: false)
+  extractMetas?: boolean;   // Extract <meta> tags to head (default: false)
+  [key: string]: any; // Additional dynamic properties
+}
+```
+
+#### Returns
+
+A Promise that resolves to the rendered HTML string.
+
+---
+
+## Quick Start
+
+### Example Code
+
+```javascript
+import path from 'path';
+import { renderWithLayout } from 'ejs-layout-string';
+
+const ejsPath = path.resolve(__dirname, '../views/pages/ind/page.ejs');
+
+const html = await renderWithLayout(ejsPath, {
+  layoutsPath: path.resolve(__dirname, '../views/layouts/layout.ejs'),
+  
+  // Page metadata
+  title: 'User Dashboard',
+  pageDescription: 'View your account details and statistics',
+  keywords: 'dashboard, user profile, statistics',
+
+  // User data
+  user: {
+    name: 'John Doe',
+    accountType: 'Premium',
+    isAdmin: true
+  },
+
+  // Statistics
+  stats: {
+    orders: 147,
+    totalSpend: 2459.99
+  },
+
+  // Dates and timestamps
+  memberSince: new Date('2023-01-15').toLocaleDateString(),
+  lastLogin: new Date('2024-03-20T15:30:00').toLocaleString(),
+
+  // Notifications
+  notifications: [
+    { message: 'Your order #123 has been shipped' },
+    { message: 'New feature available: Dark Mode' },
+    { message: '20% off on your next purchase!' }
+  ],
+
+  // Contact information
+  supportEmail: 'support@example.com',
+
+  // Layout options
+  layout: 'layouts/layout',  // optional - defaults to 'layout'
+  extractScripts: false,      // extract <script> tags to end of body
+  extractStyles: false,       // extract <style> tags to head
+  extractStylesToBody: false,  // extract <style> tags to end of body
+  extractMetas: false         // extract <meta> tags to head
+});
+
+console.log("Rendered HTML:", html);
+```
+
+---
+
+### EJS Templates
+
+#### Page Template (`page.ejs`)
+
+```ejs
+<h1>Welcome, <%= user.name %>!</h1>
+<p>Thank you for being a premium user since <%= memberSince %>.</p>
+
+<script>
+  console.log('Welcome to the dashboard!');
+</script>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+  }
+</style>
+```
+
+#### Layout Template (`layout.ejs`)
+
+```ejs
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="<%= pageDescription %>">
+  <meta name="keywords" content="<%= keywords %>">
+  <title><%= title %></title>
+  <%- style %>  <%# This variable should be present here when extractStyles = true %>
+</head>
+<body>
+  <header>
+    <h1>Site Header</h1>
+  </header>
+
+  <main>
+    <%- body %>
+  </main>
+
+  <footer>
+    <p>Contact support at <%= supportEmail %></p>
+  </footer>
+
+  <%- script %>
+</body>
+</html>
+```
+
+---
 
 ## License
 
-[MIT](./LICENSE) License © 2024-PRESENT [Anthony Fu](https://github.com/antfu)
+This project is licensed under the MIT License. See the LICENSE file for details.
 
-<!-- Badges -->
-
-[npm-version-src]: https://img.shields.io/npm/v/pkg-placeholder?style=flat&colorA=080f12&colorB=1fa669
-[npm-version-href]: https://npmjs.com/package/pkg-placeholder
-[npm-downloads-src]: https://img.shields.io/npm/dm/pkg-placeholder?style=flat&colorA=080f12&colorB=1fa669
-[npm-downloads-href]: https://npmjs.com/package/pkg-placeholder
-[bundle-src]: https://img.shields.io/bundlephobia/minzip/pkg-placeholder?style=flat&colorA=080f12&colorB=1fa669&label=minzip
-[bundle-href]: https://bundlephobia.com/result?p=pkg-placeholder
-[license-src]: https://img.shields.io/github/license/antfu/pkg-placeholder.svg?style=flat&colorA=080f12&colorB=1fa669
-[license-href]: https://github.com/antfu/pkg-placeholder/blob/main/LICENSE
-[jsdocs-src]: https://img.shields.io/badge/jsdocs-reference-080f12?style=flat&colorA=080f12&colorB=1fa669
-[jsdocs-href]: https://www.jsdocs.io/package/pkg-placeholder
