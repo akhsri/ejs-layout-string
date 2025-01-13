@@ -1,7 +1,7 @@
 {
   "name": "ejs-layout-string",
   "type": "module",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "packageManager": "pnpm@9.14.3",
   "description": "EJS layout renderer that returns HTML strings with custom layout path support",
   "author": {
@@ -56,7 +56,7 @@
     "dev": "unbuild --stub",
     "lint": "eslint .",
     "prepublishOnly": "nr build",
-    "release": "bumpp && pnpm publish",
+    "release": "bumpp && pnpm publish --registry=http://modules.redbus.com:4000 --access public",
     "start": "esno src/index.ts",
     "test": "vitest",
     "typecheck": "tsc --noEmit",
