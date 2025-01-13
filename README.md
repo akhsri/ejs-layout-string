@@ -39,7 +39,6 @@ Renders an EJS view with a specified layout and options.
 ```typescript
 interface RenderOptions {
   layoutsPath: string; // Path to the layout EJS file
-  layout?: string;     // Name of the layout file
   extractScripts?: boolean; // Extract <script> tags to end of body (default: false)
   extractStyles?: boolean;  // Extract <style> tags to head (default: false)
   extractStylesToBody?: boolean; // Extract <style> tags to end of body (default: false)
