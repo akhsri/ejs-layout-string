@@ -2,12 +2,13 @@ import ejs from 'ejs';
 
 const contentPattern = '&&<>&&';
 
-function contentFor(contentName: string) {
+function contentFor(contentName: any) {
   return contentPattern + contentName + contentPattern;
 }
 
 function parseContents(locals: any) {
-  let name: string, i = 1, str = locals.body;
+  let name, i = 1;
+  const str = locals.body;
   const regex = new RegExp('\n?' + contentPattern + '.+?' + contentPattern + '\n?', 'g');
   const split = str.split(regex);
   const matches = str.match(regex);
@@ -15,7 +16,7 @@ function parseContents(locals: any) {
   locals.body = split[0];
 
   if (matches !== null) {
-    matches.forEach(function (match: any) {
+    matches.forEach((match: any) => {
       name = match.split(contentPattern)[1];
       locals[name] = split[i];
       i++;
@@ -23,39 +24,34 @@ function parseContents(locals: any) {
   }
 }
 
-function parseScripts(locals: any) {
+function parseElements(locals: any, regex: any, prop: string, shouldExtract: boolean) {
   const str = locals.body;
-  const regex = /\<script[\s\S]*?\>[\s\S]*?\<\/script\>/g;
 
-  if (regex.test(str)) {
+  if (shouldExtract && regex.test(str)) {
     locals.body = str.replace(regex, '');
-    locals.script = str.match(regex)?.join('\n') || '';
+    locals[prop] = str.match(regex)?.join('\n') || '';
+  } else {
+    locals[prop] = ''; // Ensure no leftover extracted content
   }
 }
 
-
-function parseStyles(locals: any) {
-  const str = locals.body;
-  const regex = /(?:\<style[\s\S]*?\>[\s\S]*?\<\/style\>)|(?:\<link[\s\S]*?\>(?:\<\/link\>)?)/g;
-
-  if (regex.test(str)) {
-    locals.body = str.replace(regex, '');
-    locals.style = str.match(regex)?.join('\n') || '';
-  }
+function parseScripts(locals: object, shouldExtract: boolean) {
+  const scriptRegex = /<script[\s\S]*?>[\s\S]*?<\/script>/g;
+  parseElements(locals, scriptRegex, 'script', shouldExtract);
 }
 
-function parseMetas(locals: any) {
-  const str = locals.body;
-  const regex = /\<meta(?!.*?(data-ignore|someIgnore))[\s\S]*?\/?>/g;
-
-  if (regex.test(str)) {
-    locals.body = str.replace(regex, '');
-    locals.meta = str.match(regex)?.join('\n') || '';
-  }
+function parseStyles(locals: object, shouldExtract: boolean) {
+  const styleRegex = /(?:<style[\s\S]*?>[\s\S]*?<\/style>)|(?:<link[\s\S]*?>(?:<\/link>)?)/g;
+  parseElements(locals, styleRegex, 'style', shouldExtract);
 }
 
-function renderFileAsync(view: string, options: object) {
-  return new Promise<string>((resolve, reject) => {
+function parseMetas(locals: object, shouldExtract: boolean) {
+  const metaRegex = /<meta(?!.*?(data-ignore|someIgnore))[\s\S]*?\/?>/g;
+  parseElements(locals, metaRegex, 'meta', shouldExtract);
+}
+
+function renderFileAsync(view: string, options: any) {
+  return new Promise((resolve, reject) => {
     ejs.renderFile(view, options, (err, str) => {
       if (err) {
         return reject(err);
@@ -69,7 +65,7 @@ export async function renderWithLayout(view: string, options: any) {
   const appSettings = {
     layout: 'layout',
     extractScripts: true,
-    extractStyles: false,
+    extractStyles: true,
     extractMetas: true,
   };
 
@@ -83,7 +79,7 @@ export async function renderWithLayout(view: string, options: any) {
     const str = await renderFileAsync(view, mergedOptions);
 
     const locals = {
-      defineContent: (contentName: string) => locals[contentName] || '',
+      defineContent: (contentName: any) => locals[contentName] || '',
       contentFor: contentFor,
       ...mergedOptions,
       body: str,
@@ -100,27 +96,19 @@ export async function renderWithLayout(view: string, options: any) {
     locals.style = '';
     locals.meta = '';
 
-    // Parse and extract elements
-    if (options.extractScripts || appSettings.extractScripts) {
-      parseScripts(locals); // Removes scripts and stores them in locals.script
-    }
+    // Parse and extract elements based on options
+    parseScripts(locals, options.extractScripts);
+    parseStyles(locals, options.extractStyles);
+    parseMetas(locals, options.extractMetas);
 
-    if (options.extractStyles || appSettings.extractStyles) {
-      parseStyles(locals);
-    }
-
-    if (options.extractMetas || appSettings.extractMetas) {
-      parseMetas(locals);
-    }
-
-    parseContents(locals);
+    parseContents(locals); // Parse content blocks like <%- contentFor('foo') %>
 
     // Render the layout with parsed locals
     const layoutStr = await renderFileAsync(options.layoutsPath, locals);
 
     return layoutStr;
   } catch (err) {
+    console.error('Error in renderWithLayout: ', err);
     throw err;
   }
 }
-
