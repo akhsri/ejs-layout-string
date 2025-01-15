@@ -45,15 +45,11 @@ function parseElements(locals: any, regex: any, prop: string, shouldExtract: boo
   if (shouldExtract && !extractToBody && regex.test(str)) {
     locals.body = str.replace(regex, '');
     locals[prop] = str.match(regex)?.join('\n') || '';
-  } else if (!shouldExtract && extractToBody && regex.test(str)) {
+  } else if (extractToBody && regex.test(str)) {
     const extractedContent = str.match(regex)?.join('\n') || '';
-    locals.body = str.replace(regex, '') + `\n${extractedContent}`;
-    locals[prop] = '';
-  } else if (shouldExtract && extractToBody && regex.test(str)) {
-    const extractedContent = str.match(regex)?.join('\n') || '';
-    locals.body = str.replace(regex, '') + `\n${extractedContent}`;
-    locals[prop] = '';
-  } else {
+    locals.body = str.replace(regex, '') ;
+    locals[prop] = `\n${extractedContent}`;
+  }  else {
     locals[prop] = '';
   }
 }
@@ -63,9 +59,9 @@ function parseScripts(locals: object, shouldExtract: boolean) {
   parseElements(locals, scriptRegex, 'script', shouldExtract);
 }
 
-function parseStyles(locals: object, shouldExtract: boolean) {
+function parseStyles(locals: object, shouldExtract: boolean, extractStylesToBody = false) {
   const styleRegex = /(?:<style[\s\S]*?>[\s\S]*?<\/style>)|(?:<link[\s\S]*?>(?:<\/link>)?)/g;
-  parseElements(locals, styleRegex, 'style', shouldExtract);
+  parseElements(locals, styleRegex, 'style', shouldExtract, extractStylesToBody);
 }
 
 function parseMetas(locals: object, shouldExtract: boolean) {
@@ -112,7 +108,7 @@ export async function renderWithLayout(view: string, options: RenderOptions) {
 
     // Parse and extract elements based on options
     parseScripts(locals, options.extractScripts || false);
-    parseStyles(locals, options.extractStyles || false);
+    parseStyles(locals, options.extractStyles || false, options.extractStylesToBody || false);
     parseMetas(locals, options.extractMetas || false);
 
     parseContents(locals); // Parse content blocks like <%- contentFor('foo') %>
