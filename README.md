@@ -1,6 +1,8 @@
 # ejs-layout-string
 
-`ejs-layout-string` is a utility module for rendering EJS templates with layouts, allowing for dynamic extraction of `<script>`, `<style>`, and `<meta>` tags. It simplifies content organization and improves code reusability. The module also facilitates performance optimization by providing the ability to use the rendered HTML for caching.
+`ejs-layout-string` is a utility module for rendering EJS templates with layouts, allowing for dynamic extraction of `<script>`, `<style>`, and `<meta>` tags. It simplifies content organization and improves code reusability. 
+
+The module facilitates performance optimization by providing the ability to use the rendered HTML for caching and also facilitates **server-side rendering (SSR)** by returning the rendered HTML as a string.
 
 ---
 
@@ -81,17 +83,7 @@ const html = await renderWithLayout(ejsPath, {
     accountType: 'Premium',
     isAdmin: true
   },
-  stats: {
-    orders: 147,
-    totalSpend: 2459.99
-  },
   memberSince: new Date('2023-01-15').toLocaleDateString(),
-  lastLogin: new Date('2024-03-20T15:30:00').toLocaleString(),
-  notifications: [
-    { message: 'Your order #123 has been shipped' },
-    { message: 'New feature available: Dark Mode' },
-    { message: '20% off on your next purchase!' }
-  ],
   supportEmail: 'support@example.com',        
 });
 
@@ -150,6 +142,20 @@ console.log("Rendered HTML:", html);
 ```
 
 ---
+
+#### Usage Note
+
+To render the returned HTML string as part of an HTTP response:
+
+```javascript
+app.get('/', async (req, res) => {
+  const htmlString = await renderWithLayout(ejsPath, {
+    layoutsPath: layoutPath,
+    title: 'Home Page',
+    user: { name: 'John Doe' },
+  });
+  res.send(htmlString);
+});
 
 ## License
 

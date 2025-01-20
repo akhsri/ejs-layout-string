@@ -27,7 +27,9 @@
     "express",
     "ejs string",
     "ejs layout",
-    "html caching"
+    "html caching",
+    "server side rendering",
+    "ssr"
   ],
   "sideEffects": false,
   "exports": {
