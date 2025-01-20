@@ -75,7 +75,7 @@
     "eslint": "^9.15.0",
     "esno": "^4.8.0",
     "lint-staged": "^15.2.10",
-    "pnpm": "^9.14.3",
+    "pnpm": "^9.15.4",
     "simple-git-hooks": "^2.11.1",
     "typescript": "^5.7.2",
     "unbuild": "^2.0.0",
