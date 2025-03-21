@@ -11,12 +11,12 @@
   },
   "license": "MIT",
   "funding": "https://github.com/sponsors/akhsri",
-  "homepage": "https://github.com/redbus-labs/ejs-layout-string#readme",
+  "homepage": "https://github.com/akhsri/ejs-layout-string#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/redbus-labs/ejs-layout-string.git"
+    "url": "git+https://github.com/akhsri/ejs-layout-string.git"
   },
-  "bugs": "https://github.com/redbus-labs/ejs-layout-string/issues",
+  "bugs": "https://github.com/akhsri/ejs-layout-string/issues",
   "keywords": [
     "ejs",
     "layout",
